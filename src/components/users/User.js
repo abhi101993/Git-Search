@@ -1,45 +1,39 @@
-import React, { Component,Fragment } from 'react';
+import React, { Fragment, useEffect,useContext} from 'react';
 import Spinner from '../layout/spinner';
-import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import Repos from '../repos/Repos';
+import GithubContext from '../../context/github/githubContext';
 
 
 
-export class User extends Component {
+const User  = ({match}) => {
+    
+    const githubContext = useContext(GithubContext);
 
-    static propTypes = 
-    {
-        loading: PropTypes.bool,
+    const {loading,getUser,user,repos,getUserRepos} = githubContext;
 
-        user: PropTypes.object.isRequired,
+    const {name, avatar_url,location,bio,blog,login,html_url,followers,following,
+        public_repos,public_gists,hireable,company}  = user;
 
-        repos: PropTypes.array.isRequired,
-
-        getUser: PropTypes.func.isRequired,
-
-        getUserRepos: PropTypes.func.isRequired
-
-    };
+    
+ 
 
 
-    componentDidMount()
-    {
-         this.props.getUser(this.props.match.params.login);
-         this.props.getUserRepos(this.props.match.params.login);
+      useEffect (() => 
+      {
+        getUser(match.params.login);
+        getUserRepos(match.params.login);
+    
 
-    }
-    render() {
+      },[]);
 
-        const {name, avatar_url,location,bio,blog,login,html_url,followers,following,
-        public_repos,public_gists,hireable,company} = this.props.user;
-
-        const {loading,repos} = this.props;
 
         if(loading)
         {
             return <Spinner/>;
         }
+
+
         return  (<Fragment>
 
                   <Link to='/' className='btn btn-light'>
@@ -114,7 +108,7 @@ export class User extends Component {
                 </Fragment>
 
         );
-    }
-}
+    };
+
 
 export default User
